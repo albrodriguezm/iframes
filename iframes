@@ -1,0 +1,40 @@
+function cerrarIframes() {
+  // Obtener todos los iframes de la página
+  var iframes = document.getElementsByTagName("iframe");
+
+  // Cerrar el iframe visible en primer lugar
+  for (var i = 0; i < iframes.length; i++) {
+    var iframe = iframes[i];
+    var rect = iframe.getBoundingClientRect();
+    if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+      iframe.contentWindow.postMessage('cerrar', '*');
+      break;
+    }
+  }
+
+  // Recorrer los iframes anidados hasta el nivel 3
+  for (var i = 0; i < iframes.length; i++) {
+    var iframe = iframes[i];
+    var innerIframes = iframe.contentDocument.getElementsByTagName("iframe");
+    for (var j = 0; j < innerIframes.length; j++) {
+      var innerIframe = innerIframes[j];
+      var innerInnerIframes = innerIframe.contentDocument.getElementsByTagName("iframe");
+      for (var k = 0; k < innerInnerIframes.length; k++) {
+        var innerInnerIframe = innerInnerIframes[k];
+        // Cerrar el iframe
+        innerInnerIframe.contentWindow.postMessage('cerrar', '*');
+      }
+      // Cerrar el iframe
+      innerIframe.contentWindow.postMessage('cerrar', '*');
+    }
+    // Cerrar el iframe
+    iframe.contentWindow.postMessage('cerrar', '*');
+  }
+}
+
+
+La función utiliza el método getBoundingClientRect() para determinar qué iframe está visible en primer lugar
+en la página y cierra ese iframe enviando un mensaje al contenido del iframe utilizando el método postMessage().
+Luego, la función recorre todos los iframes anidados utilizando un bucle for anidado y cierra cada iframe 
+utilizando el mismo método postMessage(). La función asume que cada iframe tiene una página web diferente 
+cargada y que cada página web tiene acceso a la API de postMessage().
